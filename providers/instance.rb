@@ -10,18 +10,21 @@ def initialize(new_resource, run_context)
   @init_res = set_service_init_resource
   @conf_dir_res = set_configuration_dir_resource
   @dest_dir_res = set_destination_dir_resource
+  @inst_dir_res = set_installation_dir_resource
   @source_file_res = set_source_file_resource
+  @extract_res = set_extract_resource
 end
 
 action :create do
   manage_user(:create)
   manage_group(:create)
 
-  [@dest_dir_res, @conf_dir_res].each do |dir|
+  [@dest_dir_res, @conf_dir_res, @inst_dir_res].each do |dir|
     manage_directory(dir , :create)
   end
 
   manage_source_file(:create)
+  manage_extract_file(:run)
   manage_service_init(:create)
 end
 
@@ -73,6 +76,10 @@ def set_configuration_dir_resource
   Chef::Resource::Directory.new(instance_configuration_dir, @run_context)
 end
 
+def set_installation_dir_resource
+  Chef::Resource::Directory.new(instance_installation_dir, @run_context)
+end
+
 def set_extract_resource
   Chef::Resource::Execute.new(source_file, @run_context)
 end
@@ -102,6 +109,17 @@ def manage_source_file(action)
   @source_file_res.group @group
   @source_file_res.mode 00644
   @source_file_res.run_action(action)
+end
+
+# HACK: Really dislike the execute resource.
+def manage_extract_file(action)
+  @extract_res.user 'root'
+  @extract_res.path %w(/bin /sbin /usr/bin /usr/sbin)
+  @extract_res.command tar_command
+  @extract_res.creates instance_binary
+  @extract_res.returns 0
+  @extract_res.timeout 180
+  @extract_res.run_action(action)
 end
 
 def manage_service_init(action)
@@ -149,6 +167,11 @@ end
 
 def source_file
   ::File.join('', Chef::Config[:file_cache_path], file_name)
+end
+
+def tar_command
+  "tar xaf #{ source_file } --owner #{ @user } --group #{ @group }\
+  --strip-components=1 -C #{ instance_installation_dir }"
 end
 
 def version
