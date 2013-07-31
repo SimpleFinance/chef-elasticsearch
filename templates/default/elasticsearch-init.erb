@@ -1,0 +1,28 @@
+#!/bin/bash
+#
+# Elasticsearch init script for Instance <%= @name -%>
+# The chef_elasticsearch cookbook manages me.
+
+case "$1" in
+
+  start)
+    echo "Starting ES Instance[<%= @name -%>]: "
+    su - <%= @user -%> -c "<%= @bin_path %>"
+    echo "OK"
+  ;;
+
+  stop)
+    echo "Stopping ES Instance[<%= @name %>]"
+    echo "OK"
+  ;;
+
+  status)
+    echo "Status ES Instance[<%= @name %>]"
+  ;;
+
+  *)
+    echo "Usage $0 {start|stop|status}"
+    exit 1
+
+esac
+exit 0
