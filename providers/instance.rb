@@ -33,13 +33,14 @@ action :enable do
 end
 
 action :destroy do
-  [@dest_dir_res, @conf_dir_res].each do |dir|
+  [@dest_dir_res, @conf_dir_res, @inst_dir_res].each do |dir|
     manage_directory(dir, :delete)
   end
 
   manage_user(:remove)
   manage_group(:remove)
   manage_source_file(:delete)
+  manage_service_init(:delete)
 end
 
 action :disable do
