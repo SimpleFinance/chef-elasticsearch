@@ -4,10 +4,8 @@ def initialize(new_resource, run_context=nil)
   super
   @new_resource = new_resource
   @run_context = run_context
-  @user = @new_resource.user
-  @group = @new_resource.group
+  @instance = lookup_instance(@new_resource.instance, @run_context)
   @conf_file_res = set_configuration_file_resource
-  @instance = lookup_instance(@new_resource.name, @run_context)
 end
 
 action :create do
