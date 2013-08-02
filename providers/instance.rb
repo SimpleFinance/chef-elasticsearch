@@ -9,6 +9,7 @@ def initialize(new_resource, run_context)
   @service_res = set_service_resource
   @init_res = set_service_init_resource
   @conf_dir_res = set_configuration_dir_resource
+  @link_res = set_config_dir_link_resource
   @dest_dir_res = set_destination_dir_resource
   @inst_dir_res = set_installation_dir_resource
   @source_file_res = set_source_file_resource
@@ -25,6 +26,7 @@ action :create do
 
   manage_source_file(:create)
   manage_extract_file(:run)
+  manage_config_dir_link(:create)
   manage_service_init(:create)
 end
 
@@ -40,6 +42,7 @@ action :destroy do
   manage_user(:remove)
   manage_group(:remove)
   manage_source_file(:delete)
+  manage_config_dir_link(:delete)
   manage_service_init(:delete)
 end
 
@@ -79,6 +82,10 @@ end
 
 def set_installation_dir_resource
   Chef::Resource::Directory.new(instance_installation_dir, @run_context)
+end
+
+def set_config_dir_link_resource
+  Chef::Resource::Link.new(instance_installation_configuration_dir, @run_context)
 end
 
 def set_extract_resource
@@ -138,6 +145,14 @@ def manage_service_init(action)
   @init_res.run_action(action)
 end
 
+def manage_config_dir_link(action)
+  @link_res.target_file instance_installation_configuration_dir
+  @link_res.to instance_configuration_dir
+  @link_res.owner @user
+  @link_res.group @group
+  @link_res.run_action(action)
+end
+
 def manage_service(action)
   @service.run_action(action)
 end
@@ -158,6 +173,10 @@ def instance_installation_dir
   ::File.join('', instance_destination_dir, version)
 end
 
+def instance_installation_configuration_dir
+  ::File.join('', instance_installation_dir, 'config')
+end
+
 def instance_binary
   ::File.join('', instance_installation_dir, 'bin', 'elasticsearch')
 end
@@ -172,7 +191,8 @@ end
 
 def tar_command
   "tar xaf #{ source_file } --owner #{ @user } --group #{ @group }\
-  --strip-components=1 -C #{ instance_installation_dir }"
+  --strip-components=1 -C #{ instance_installation_dir }\
+  --exclude='config/elasticsearch.yml' --exclude='config/logging.yml'"
 end
 
 def version
