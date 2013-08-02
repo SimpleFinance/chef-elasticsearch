@@ -1,0 +1,6 @@
+site 'http://community.opscode.com/api/v1'
+
+cookbook 'elasticsearch', path: './'
+
+cookbook 'apt'
+cookbook 'es_test', path: './test/cookbooks/es_test'
