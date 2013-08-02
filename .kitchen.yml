@@ -3,7 +3,7 @@
 driver_plugin: vagrant
 
 platforms:
-<% %w(11.4.4 10.26.0).each do |chef_version| %>
+<% %w(11.6.0 11.4.4 10.26.0).each do |chef_version| %>
 - name: ubuntu-12.04-<%= chef_version %>
   driver_config:
     box: canonical-ubuntu-12.04
