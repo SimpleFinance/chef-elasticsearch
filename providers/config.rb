@@ -24,27 +24,39 @@ end
 
 def manage_config_file(action)
   @conf_file_res.path config_file_with_dir
-  @conf_file_res.content config_to_json
-  @conf_file_res.user @user
-  @conf_file_res.group @group
+  @conf_file_res.content pretty_json_config
+  @conf_file_res.user @instance.user
+  @conf_file_res.group @instance.group
   @conf_file_res.mode 00644
   @conf_file_res.run_action(action)
 end
 
 def config_to_json
-  @new_resource.config_options.to_json
+  JSON.parse(@new_resource.config_options.to_json)
 end
 
-def lookup_instance_conf_dir
-  @instance.configuration_dir
+def pretty_json_config
+  JSON.pretty_generate(config_to_json)
+end
+
+def instance_destination_dir
+  ::File.join('', @instance.destination_dir, @instance.name)
+end
+
+def instance_conf_dir
+  if @instance.configuration_dir.nil?
+    ::File.join('', instance_destination_dir, 'conf')
+  else
+    @instance.configuration_dir
+  end
 end
 
 def config_file_name
   "#{ @new_resource.config_type }.json"
 end
 
-def conf_file_with_dir
-  ::File.join('', lookup_instance_conf_dir, config_file_name)
+def config_file_with_dir
+  ::File.join('', instance_conf_dir, config_file_name)
 end
 
 def lookup_resource(type, name, run_context)
