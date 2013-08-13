@@ -47,7 +47,7 @@ def manage_plugin_install(inst_action, run_action)
 end
 
 def instance_installation_dir
-  ::File.join('', @instance.destination_dir, version)
+  ::File.join('', @instance.destination_dir, @instance.install_options[:version])
 end
 
 def plugin_command
