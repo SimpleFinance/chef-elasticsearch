@@ -19,6 +19,7 @@ elasticsearch_plugin 'elasticsearch-zookeeper' do
   instance 'es_test'
   install_options({ version: '0.90.0',
                     url: 'https://oss-es-plugins.s3.amazonaws.com/elasticsearch-jetty',
+                    install_method: 'manual',
                     plugin_creates: 'bin/zookeeper'
   })
 end
