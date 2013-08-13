@@ -20,6 +20,7 @@ def initialize(new_resource, run_context)
   @install_options = @new_resource.install_options
   @plugin = @new_resource.plugin
   @plugin_res = set_plugin_resource
+  @source_file_res = set_source_file_resource
 end
 
 action :create do
@@ -36,6 +37,10 @@ def set_plugin_resource
   Chef::Resource::Execute.new(@plugin, @run_context)
 end
 
+def set_source_file_resource
+  Chef::Resource::RemoteFile.new(file_name, @run_context)
+end
+
 def manage_plugin_install(inst_action, run_action)
   @plugin_res.user @instance.user
   @plugin_res.path %w(/bin /sbin /usr/bin /usr/sbin)
@@ -46,12 +51,57 @@ def manage_plugin_install(inst_action, run_action)
   @plugin_res.run_action(run_action)
 end
 
+def manage_source_file(action)
+  @source_file_res.path source_file
+  @source_file_res.source remote_file_location
+  @source_file_res.user @user
+  @source_file_res.group @group
+  @source_file_res.mode 00644
+  @source_file_res.run_action(action)
+end
+
 def instance_installation_dir
   ::File.join('', @instance.destination_dir, @instance.name, @instance.install_options[:version])
 end
 
 def plugin_command
   ::File.join('', instance_installation_dir, 'bin', 'plugin')
+end
+
+def plugin_unzip_command
+  "#{ unzip } #{ compressed_plugin_file } -d #{ plugin_dir }"
+end
+
+# If for some reason unzip lives outside of @plugin_res.path
+def unzip
+  @install_options[:unzip_path] || 'unzip'
+end
+
+def source_file
+  ::File.join('', Chef::Config[:file_cache_path], file_name)
+end
+
+def url
+  @new_resource.install_options[:url]
+end
+
+def file_name
+  @install_options[:plugin_file] || "#{ @plugin }-#{ @version }.zip"
+end
+
+def remote_file_location
+  "#{ url }/#{ file_name }"
+end
+
+# HACK: This is pretty ugly. Refactor me please.
+def install_method
+  case @install_options[:install_method].downcase
+  when 'plugin'
+    plugin_manage_command(action)
+  when 'manual'
+    manage_source_file(:create)
+    manage_extract_file(:run)
+  end
 end
 
 def plugin_manage_command(action)
