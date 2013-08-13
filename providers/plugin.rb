@@ -37,7 +37,7 @@ def set_plugin_resource
 end
 
 def manage_plugin_install(inst_action, run_action)
-  @plugin_res.user 'root'
+  @plugin_res.user @instance.user
   @plugin_res.path %w(/bin /sbin /usr/bin /usr/sbin)
   @plugin_res.command plugin_manage_command(inst_action)
   @plugin_res.creates plugin_install_creates
