@@ -43,4 +43,4 @@ suites:
   - recipe[es_test::config]
 - name: plugin
   run_list:
-  - recipe[es_test::plugin]
+  - recipe[es_test::plugins]
