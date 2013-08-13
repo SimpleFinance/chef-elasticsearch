@@ -40,7 +40,7 @@ def manage_plugin_install(inst_action, run_action)
   @plugin_res.user 'root'
   @plugin_res.path %w(/bin /sbin /usr/bin /usr/sbin)
   @plugin_res.command plugin_manage_command(inst_action)
-  @plugin_res.creates instance_binary
+  @plugin_res.creates plugin_install_creates
   @plugin_res.returns 0
   @plugin_res.timeout 180
   @plugin_res.run_action(run_action)
@@ -56,6 +56,19 @@ end
 
 def plugin_manage_command(action)
   "#{ plugin_command } --#{ action } #{ plugin_install_name }"
+end
+
+def plugin_install_creates
+  @install_options[:plugin_creates] || plugin_dir
+end
+
+def plugin_dir
+  ::File.join('', instance_plugin_dir, @plugin)
+end
+
+# TODO: Can we pull this from instance configuration?
+def instance_plugin_dir
+  ::File.join('', instance_installation_dir, 'plugins')
 end
 
 def plugin_install_name
