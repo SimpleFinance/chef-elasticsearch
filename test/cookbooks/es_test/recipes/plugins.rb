@@ -19,7 +19,8 @@ elasticsearch_plugin 'elasticsearch-zookeeper' do
   instance 'es_test'
   install_options({ version: '0.90.0',
                     username: 'sonian',
-                    repository: 'elasticsearch-zookeeper'
+                    repository: 'elasticsearch-zookeeper',
+                    plugin_creates: 'bin/zookeeper'
   })
 end
 
