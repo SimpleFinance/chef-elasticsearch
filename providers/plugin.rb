@@ -74,10 +74,12 @@ end
 def plugin_install_name
   options = @install_options
 
-  if options.has_key?[:groupId] && options.has_key?[:artifactId]
-    "#{ options[:groupId] }/#{ options[:artifactId] }/#{ version }"
-  elsif options.has_key?[:username] && options.has_key?[:repository]
+  if options.has_key?(:groupId) && options.has_key?(:artifactId)
+    "#{ options[:groupId] }/#{ options[:artifactId] }/#{ options[:version] }"
+  elsif options.has_key?(:username) && options.has_key?(:repository)
     "#{ options[:username] }/#{ options[:repository] }"
+  elsif options.has_key?(:url)
+    options[:url]
   else
     "elasticsearch/#{ @plugin }/#{ options[:version] }"
   end
