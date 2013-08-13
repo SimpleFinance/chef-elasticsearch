@@ -1,17 +1,3 @@
-#es_test/0.90.2/bin$ ./plugin
-#Usage:
-#    -u, --url     [plugin location]   : Set exact URL to download the plugin from
-#    -i, --install [plugin name]       : Downloads and installs listed plugins [*]
-#    -r, --remove  [plugin name]       : Removes listed plugins
-#    -l, --list                        : List installed plugins
-#    -v, --verbose                     : Prints verbose messages
-#    -h, --help                        : Prints this help message
-#
-#    [*] Plugin name could be:
-#    elasticsearch/plugin/version for official elasticsearch plugins (download from download.elasticsearch.org)
-#    groupId/artifactId/version   for community plugins (download from maven central or oss sonatype)
-#    username/repository          for site plugins (download from github master)
-
 def initialize(new_resource, run_context)
   @new_resource = new_resource
   @run_context = run_context
