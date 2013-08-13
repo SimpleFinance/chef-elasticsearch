@@ -33,7 +33,7 @@ end
 private
 
 def set_plugin_resource
-  Chef::Resource::Execute.new(source_file, @run_context)
+  Chef::Resource::Execute.new(@plugin, @run_context)
 end
 
 def manage_plugin_install(inst_action, run_action)
