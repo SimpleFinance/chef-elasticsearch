@@ -10,10 +10,15 @@ class Elasticsearch
         @plugin = @new_resource.plugin
         @plugin_res = set_plugin_resource
         @source_file_res = set_source_file_resource
+        @plugin_dir_res = set_plugin_dir_resource
+        @unzip_package_res = set_unzip_package_resource
       end
 
       def install
-        manage_plugin_install('install', :run)
+        manage_source_file(:create)
+        manage_plugin_directory(:create)
+        manage_unzip_package(:install) if @install_options[:install_unzip]
+        extract_plugin(:run)
       end
 
       def remove
@@ -30,8 +35,16 @@ class Elasticsearch
         Chef::Resource::RemoteFile.new(file_name, @run_context)
       end
 
+      def set_plugin_dir_resource
+        Chef::Resource::Directory.new(plugin_dir, @run_context)
+      end
+
+      def set_unzip_package_resource
+        Chef::Resource::Package.new('unzip', @run_context)
+      end
+
       def extract_plugin(run_action)
-        @plugin_res.user @instance.user
+        @plugin_res.user 'root'
         @plugin_res.path %w(/bin /sbin /usr/bin /usr/sbin)
         @plugin_res.command plugin_unzip_command
         @plugin_res.creates plugin_install_creates
@@ -41,6 +54,7 @@ class Elasticsearch
       end
 
       def manage_source_file(action)
+        Chef::Log.info("source is: #{ remote_file_location }")
         @source_file_res.path source_file
         @source_file_res.source remote_file_location
         @source_file_res.user @user
@@ -49,12 +63,25 @@ class Elasticsearch
         @source_file_res.run_action(action)
       end
 
+      def manage_plugin_directory(action)
+        @plugin_dir_res.path plugin_dir
+        @plugin_dir_res.user @user
+        @plugin_dir_res.group @group
+        @plugin_dir_res.mode 00755
+        @plugin_dir_res.run_action(action)
+      end
+
+      # TODO: passing a string for unzip package possible to fail
+      def manage_unzip_package(action)
+        @unzip_package_res.run_action(action)
+      end
+
       def instance_installation_dir
         ::File.join('', @instance.destination_dir, @instance.name, @instance.install_options[:version])
       end
 
       def plugin_unzip_command
-        "#{ unzip } #{ compressed_plugin_file } -d #{ plugin_dir }"
+        "#{ unzip } #{ source_file } -d #{ plugin_dir }"
       end
 
       # If for some reason unzip lives outside of @plugin_res.path
@@ -89,6 +116,20 @@ class Elasticsearch
       # TODO: Can we pull this from instance configuration?
       def instance_plugin_dir
         ::File.join('', instance_installation_dir, 'plugins')
+      end
+
+      def lookup_resource(type, name, run_context)
+        begin
+          run_context.resource_collection.find("#{ type }[#{ name }]")
+        rescue ArgumentError => e
+          puts "You provided invalid arugments to resource_collection.find: #{ e }"
+        rescue RuntimeError => e
+          puts "The resources you searched for were not found: #{ e }"
+        end
+      end
+
+      def lookup_instance(name, run_context)
+        lookup_resource(:elasticsearch_instance, name, run_context)
       end
     end
   end
