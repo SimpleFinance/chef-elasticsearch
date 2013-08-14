@@ -26,11 +26,11 @@ class Elasticsearch
         @source_file_res = set_source_file_resource
       end
 
-      def action_create
+      def install
         manage_plugin_install('install', :run)
       end
 
-      def action_destroy
+      def remove
         manage_plugin_install('remove', :run)
       end
 
