@@ -8,12 +8,6 @@ class Chef
       def initialize(new_resource, run_context)
         @new_resource = new_resource
         @run_context = run_context
-        @instance = lookup_instance(@new_resource.instance, @run_context)
-        @version = @new_resource.install_options[:version]
-        @install_options = @new_resource.install_options
-        @plugin = @new_resource.plugin
-        @plugin_res = set_plugin_resource
-        @source_file_res = set_source_file_resource
       end
 
       def whyrun_supported?
@@ -25,7 +19,6 @@ class Chef
       end
 
       def action_create
-        create_dst_dir
         instance(@new_resource.install_type, 'install')
       end
 
@@ -34,6 +27,17 @@ class Chef
       end
 
       private
+
+      def instance(type, action)
+        instance_class = instance_sub_class(type)
+        i = instance_class.new(@new_resource, @run_context)
+        i.send(action)
+      end
+
+      def instance_sub_class(type)
+        klass = "Elasticsearch::Plugin::#{ type.capitalize }Cmd"
+        klass.split('::').reduce(Object) { |kls, t| kls.const_get(t) }
+      end
 
     end
   end
