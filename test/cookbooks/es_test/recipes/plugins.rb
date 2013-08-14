@@ -10,16 +10,18 @@ elasticsearch_instance 'es_test' do
   })
 end
 
-elasticsearch_plugin 'elasticsearch-jetty' do
+elasticsearch_plugin 'elasticsearch-river-wikipedia' do
   instance 'es_test'
-  install_options({ version: '0.90.0' })
+  install_type 'plugin'
+  install_options({ version: '1.1.0' })
 end
 
 elasticsearch_plugin 'elasticsearch-zookeeper' do
   instance 'es_test'
+  install_type 'manual'
   install_options({ version: '0.90.0',
-                    url: 'https://oss-es-plugins.s3.amazonaws.com/elasticsearch-jetty',
-                    install_method: 'manual',
+                    url: 'https://oss-es-plugins.s3.amazonaws.com/elasticsearch-zookeeper',
+                    install_unzip: true,
                     plugin_creates: 'bin/zookeeper'
   })
 end
