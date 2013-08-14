@@ -1,0 +1,16 @@
+.vagrant
+Berksfile.lock
+Gemfile.lock
+*~
+*#
+.#*
+\#*#
+.*.sw[a-z]
+*.un~
+/cookbooks
+.kitchen/
+.kitchen.local.yml
+.DS_Store
+helpers/chef_generator/logstash/
+helpers/chef_generator/logstash.tar.gz
+coverage
