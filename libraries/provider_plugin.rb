@@ -19,11 +19,11 @@ class Chef
       def load_current_resource
       end
 
-      def action_create
+      def action_install
         instance(@new_resource.install_type, 'install')
       end
 
-      def action_destroy
+      def action_remove
         instance(@new_resource.install_type, 'remove')
       end
 

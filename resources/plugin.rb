@@ -1,6 +1,6 @@
 
-actions :create, :enable, :destroy, :disable
-default_action :create
+actions :install, :remove
+default_action :install
 
 attribute :instance, kind_of: String, required: true
 attribute :plugin, kind_of: String, name_attribute: true
