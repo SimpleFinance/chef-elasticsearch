@@ -10,6 +10,7 @@ class Chef
         @run_context = run_context
       end
 
+      # TODO: Add me!
       def whyrun_supported?
         false
       end
@@ -23,7 +24,7 @@ class Chef
       end
 
       def action_destroy
-        instance(@new_resource.install_type, 'disable')
+        instance(@new_resource.install_type, 'remove')
       end
 
       private
