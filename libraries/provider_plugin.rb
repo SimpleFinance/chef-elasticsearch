@@ -4,7 +4,7 @@ require_relative 'plugin_installer'
 
 class Chef
   class Provider
-    class ElasticsearchPlugin
+    class ElasticsearchPlugin < Chef::Provider
       def initialize(new_resource, run_context)
         @new_resource = new_resource
         @run_context = run_context
