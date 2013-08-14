@@ -23,7 +23,6 @@ class Elasticsearch
         @install_options = @new_resource.install_options
         @plugin = @new_resource.plugin
         @plugin_res = set_plugin_resource
-        @source_file_res = set_source_file_resource
       end
 
       def install
