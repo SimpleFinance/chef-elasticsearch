@@ -1,0 +1,10 @@
+description:    Chef elasticsearch cookbook
+
+github:
+  org:          ops
+  name:         chef-elasticsearch
+
+jenkins:
+  name:         cookbooks-elasticsearch
+  targets:      [build, prod]
+  command:      chef-ci-cookbook
