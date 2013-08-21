@@ -14,13 +14,14 @@ class Chef
         @instance = lookup_instance(@new_resource.instance, @run_context)
       end
 
-    action :create do
-      manage_config_file(:create)
-    end
+      # TODO: Add me!
+      def whyrun_supported?
+        false
+      end
 
-    action :destroy do
-      manage_config_file(:delete)
-    end
+      # TODO: Write me!
+      def load_current_resource
+      end
 
     private
 
