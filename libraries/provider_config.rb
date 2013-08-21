@@ -5,13 +5,7 @@ class Chef
   class Provider
     class ElasticsearchConfig < Chef::Provider
 
-    def initialize(new_resource, run_context=nil)
-      super
-      @new_resource = new_resource
-      @run_context = run_context
-      @instance = lookup_instance(@new_resource.instance, @run_context)
-      @conf_file_res = set_configuration_file_resource
-    end
+      include Helpers::Elasticsearch
 
     include Helpers::Elasticsearch
 
