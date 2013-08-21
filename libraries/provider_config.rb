@@ -7,7 +7,12 @@ class Chef
 
       include Helpers::Elasticsearch
 
-    include Helpers::Elasticsearch
+      def initialize(new_resource, run_context=nil)
+        super
+        @new_resource = new_resource
+        @run_context = run_context
+        @instance = lookup_instance(@new_resource.instance, @run_context)
+      end
 
     action :create do
       manage_config_file(:create)
