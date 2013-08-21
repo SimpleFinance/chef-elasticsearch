@@ -3,6 +3,7 @@ require_relative 'helpers'
 
 class Chef
   class Provider
+    class ElasticsearchConfig < Chef::Provider
 
     def initialize(new_resource, run_context=nil)
       super
