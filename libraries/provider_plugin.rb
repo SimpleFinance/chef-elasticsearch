@@ -12,6 +12,7 @@ class Chef
       def initialize(new_resource, run_context)
         @new_resource = new_resource
         @run_context = run_context
+        @instance = lookup_instance(@new_resource.instance, @run_context)
       end
 
       # TODO: Add me!
