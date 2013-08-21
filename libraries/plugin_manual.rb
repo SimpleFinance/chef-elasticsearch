@@ -81,7 +81,7 @@ class Elasticsearch
       end
 
       def plugin_unzip_command
-        "#{ unzip } #{ source_file } -d #{ plugin_dir }"
+        "#{ unzip } #{ source_file } -qo -d #{ plugin_dir }"
       end
 
       # If for some reason unzip lives outside of @plugin_res.path
