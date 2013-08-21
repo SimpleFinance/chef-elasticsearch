@@ -11,6 +11,7 @@ def initialize(new_resource, run_context)
   @conf_dir_res = set_configuration_dir_resource
   @link_res = set_config_dir_link_resource
   @dest_dir_res = set_destination_dir_resource
+  @pid_dir_res = set_pid_dir_resource
   @inst_dir_res = set_installation_dir_resource
   @source_file_res = set_source_file_resource
   @extract_res = set_extract_resource
@@ -20,7 +21,7 @@ action :create do
   manage_user(:create)
   manage_group(:create)
 
-  [@dest_dir_res, @conf_dir_res, @inst_dir_res].each do |dir|
+  [@dest_dir_res, @conf_dir_res, @pid_dir_res, @inst_dir_res].each do |dir|
     manage_directory(dir , :create)
   end
 
@@ -74,6 +75,10 @@ end
 
 def set_destination_dir_resource
   Chef::Resource::Directory.new(instance_destination_dir, @run_context)
+end
+
+def set_pid_dir_resource
+  Chef::Resource::Directory.new(instance_pid_dir, @run_context)
 end
 
 def set_configuration_dir_resource
@@ -139,6 +144,7 @@ def manage_service_init(action)
   @init_res.mode 00755
   @init_res.variables({
     bin_path: instance_binary,
+    pid_path: instance_pid,
     name: @new_resource.name,
     user: @user
   })
@@ -179,6 +185,14 @@ end
 
 def instance_binary
   ::File.join('', instance_installation_dir, 'bin', 'elasticsearch')
+end
+
+def instance_pid_dir
+  ::File.join('', instance_destination_dir, 'pid')
+end
+
+def instance_pid
+  ::File.join('', instance_pid_dir, "#{ @new_resource.name }.pid")
 end
 
 def init_file
