@@ -23,27 +23,49 @@ class Chef
       def load_current_resource
       end
 
-    private
+      def action_create
+        manage_config_file(:create)
+      end
 
-    def set_configuration_file_resource
-      Chef::Resource::File.new(config_file_name, @run_context)
-    end
+      def action_destroy
+        manage_config_file(:delete)
+      end
 
-    def manage_config_file(action)
-      @conf_file_res.path config_file_with_dir
-      @conf_file_res.content pretty_json_config
-      @conf_file_res.user @instance.user
-      @conf_file_res.group @instance.group
-      @conf_file_res.mode 00644
-      @conf_file_res.run_action(action)
-    end
+      private
 
-    def config_to_json
-      JSON.parse(@new_resource.config_options.to_json)
-    end
+      def conf_file_res
+        @conf_file_res ||= set_configuration_file_resource
+      end
 
-    def pretty_json_config
-      JSON.pretty_generate(config_to_json)
+      def set_configuration_file_resource
+        Chef::Resource::File.new(config_file_name, @run_context)
+      end
+
+      def manage_config_file(action)
+        conf_file_res.path config_file_with_dir
+        conf_file_res.content pretty_json_config
+        conf_file_res.user @instance.user
+        conf_file_res.group @instance.group
+        conf_file_res.mode 00644
+        conf_file_res.run_action(action)
+      end
+
+      def config_to_json
+        JSON.parse(@new_resource.config_options.to_json)
+      end
+
+      def pretty_json_config
+        JSON.pretty_generate(config_to_json)
+      end
+
+      def config_file_name
+        "#{ @new_resource.config_type }.json"
+      end
+
+      def config_file_with_dir
+        ::File.join('', instance_conf_dir, config_file_name)
+      end
+
     end
   end
 end
