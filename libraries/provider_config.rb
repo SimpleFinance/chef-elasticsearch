@@ -1,5 +1,5 @@
 require 'json'
-require 'helpers'
+require_relative 'helpers'
 
 class Chef
   class Provider
