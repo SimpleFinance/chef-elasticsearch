@@ -5,10 +5,6 @@ module Helpers
       ::File.join('', @instance.destination_dir, @instance.name)
     end
 
-    def instance_destination_dir
-      ::File.join('', @instance.destination_dir, @instance.name)
-    end
-
     def instance_conf_dir
       if @instance.configuration_dir.nil?
         ::File.join('', instance_destination_dir, 'conf')
