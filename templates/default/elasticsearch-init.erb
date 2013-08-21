@@ -7,12 +7,13 @@ case "$1" in
 
   start)
     echo "Starting ES Instance[<%= @name -%>]: "
-    su - <%= @user -%> -c "<%= @bin_path %>"
+    su - <%= @user -%> -c "<%= @bin_path %> -p <%= @pid_file %>"
     echo "OK"
   ;;
 
   stop)
     echo "Stopping ES Instance[<%= @name %>]"
+    su - <%= @user -%> -c "kill -TERM $(cat <%= @pid_file %>)"
     echo "OK"
   ;;
 
