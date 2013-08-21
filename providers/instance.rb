@@ -144,7 +144,7 @@ def manage_service_init(action)
   @init_res.mode 00755
   @init_res.variables({
     bin_path: instance_binary,
-    pid_path: instance_pid,
+    pid_file: instance_pid,
     name: @new_resource.name,
     user: @user
   })
