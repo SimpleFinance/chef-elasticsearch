@@ -54,7 +54,6 @@ class Elasticsearch
       end
 
       def manage_source_file(action)
-        Chef::Log.info("source is: #{ remote_file_location }")
         @source_file_res.path source_file
         @source_file_res.source remote_file_location
         @source_file_res.user @user
