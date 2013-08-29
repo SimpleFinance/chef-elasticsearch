@@ -1,4 +1,4 @@
-require 'chef/resource/file'
+require 'chef/resource/link'
 require 'chef/resource/directory'
 
 require_relative 'helpers'

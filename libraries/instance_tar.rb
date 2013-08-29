@@ -1,7 +1,8 @@
 require 'date'
 require 'net/http'
 require 'uri'
-require 'chef/resource/file'
+require 'chef/resource/execute'
+require 'chef/resource/directory'
 require 'chef/resource/remote_file'
 
 require_relative 'helpers'

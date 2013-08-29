@@ -1,5 +1,5 @@
-require 'chef/resource/file'
-require 'chef/resource/directory'
+require 'chef/resource/user'
+require 'chef/resource/group'
 
 require_relative 'helpers'
 
