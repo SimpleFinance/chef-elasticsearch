@@ -16,7 +16,7 @@ class Chef
       end
 
       def action_create
-        instance(@new_resource.install_type, 'install')
+        instance(@new_resource.install_type, 'create')
         instance(@new_resource.service_type, 'create')
         @new_resource.updated_by_last_action(true)
       end
@@ -27,7 +27,7 @@ class Chef
       end
 
       def action_destroy
-        instance(@new_resource.service_type, 'uninstall')
+        instance(@new_resource.service_type, 'destroy')
         @new_resource.updated_by_last_action(true)
       end
 
