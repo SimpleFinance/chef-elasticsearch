@@ -69,6 +69,7 @@ class Elasticsearch
         @init_res.run_action(action)
       end
 
+      # FIXME: Should invoke the correct service provider for clarity.
       def manage_service(action)
         @service_res.run_action(action)
       end
