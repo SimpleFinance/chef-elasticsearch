@@ -12,7 +12,7 @@ attribute :install_options, kind_of: Hash
 attribute :service_options, kind_of: Hash
 
 attribute :install_type, kind_of: String,
-  equal_to: %w(tgz package), default: 'tgz'
+  equal_to: %w(tar package), default: 'tar'
 
 attribute :service_type, kind_of: String, equal_to: %w(init runit),
   default: 'init'
