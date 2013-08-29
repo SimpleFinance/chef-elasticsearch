@@ -31,5 +31,21 @@ module Helpers
       lookup_resource(:elasticsearch_instance, name, run_context)
     end
 
+    def instance_pid_dir
+      ::File.join('', instance_destination_dir, 'pid')
+    end
+
+    def instance_pid
+      ::File.join('', instance_pid_dir, "#{ @new_resource.name }.pid")
+    end
+
+    def manage_directory(res, action)
+      res.owner @user
+      res.group @group
+      res.recursive true
+      res.mode 00755
+      res.run_action(action)
+    end
+
   end
 end
