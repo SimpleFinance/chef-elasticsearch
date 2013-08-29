@@ -39,6 +39,7 @@ class Elasticsearch
         Chef::Resource::Directory.new(plugin_dir, @run_context)
       end
 
+      # TODO: passing a string for unzip package possible to fail
       def set_unzip_package_resource
         Chef::Resource::Package.new('unzip', @run_context)
       end
