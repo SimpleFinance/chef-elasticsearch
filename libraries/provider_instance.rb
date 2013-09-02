@@ -13,6 +13,7 @@ class Chef
       end
 
       def load_current_resource
+        @current_resource = Chef::Resource::ElasticsearchInstance.new(@new_resource.name, @run_context)
       end
 
       def action_create
