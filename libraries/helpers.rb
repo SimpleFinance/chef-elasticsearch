@@ -47,5 +47,19 @@ module Helpers
       res.run_action(action)
     end
 
+    def remote_was_modified_since?(file, url)
+      if ::File.exists?(file)
+        uri = URI.parse( url )
+        file_mtime = ::Date.parse(::File.mtime(file).to_s)
+
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = true if uri.scheme == 'https'
+        headers = { 'If-Modified-Since' => file_mtime.httpdate }
+        response = http.get(uri.request_uri, headers)
+
+        response == '304' ? false : true
+      end
+    end
+
   end
 end
