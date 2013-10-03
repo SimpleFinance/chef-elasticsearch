@@ -67,6 +67,7 @@ class Elasticsearch
         @plugin_dir_res.path plugin_dir
         @plugin_dir_res.user @user
         @plugin_dir_res.group @group
+        @plugin_dir_res.recursive true
         @plugin_dir_res.mode 00755
         @plugin_dir_res.run_action(action)
       end
