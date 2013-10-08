@@ -15,7 +15,7 @@ platforms:
   driver_config:
     box: opscode-ubuntu-10.04
     box_url: https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_ubuntu-10.04_provisionerless.box
-require_chef_omnibus: <%= chef_version %>
+    require_chef_omnibus: <%= chef_version %>
   run_list:
   - recipe[apt]
 - name: debian-7.1.0-<%= chef_version %>-elasticsearch
