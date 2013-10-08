@@ -171,7 +171,7 @@ def instance_configuration_dir
 end
 
 def instance_environment_vars_file
-  File.join('', instance_configuration_dir, 'environment_vars')
+  ::File.join('', instance_configuration_dir, 'environment_vars')
 end
 
 def instance_installation_dir
