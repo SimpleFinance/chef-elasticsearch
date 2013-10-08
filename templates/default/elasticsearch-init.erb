@@ -3,6 +3,10 @@
 # Elasticsearch init script for Instance <%= @name -%>
 # The chef_elasticsearch cookbook manages me.
 
+if [ -f <%= @env_vars_file -%>]; then
+  source <%= @env_vars_file -%>
+fi
+
 case "$1" in
 
   start)
@@ -23,6 +27,7 @@ case "$1" in
   *)
     echo "Usage $0 {start|stop|status}"
     exit 1
+  ;;
 
 esac
 exit 0

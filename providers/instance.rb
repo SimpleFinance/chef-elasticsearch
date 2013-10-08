@@ -139,6 +139,7 @@ def manage_service_init(action)
   @init_res.mode 00755
   @init_res.variables({
     bin_path: instance_binary,
+    env_vars_file: instance_environment_vars_file,
     name: @new_resource.name,
     user: @user
   })
@@ -167,6 +168,10 @@ def instance_configuration_dir
   else
     @new_resource.configuration_dir
   end
+end
+
+def instance_environment_vars_file
+  File.join('', instance_configuration_dir, 'environment_vars')
 end
 
 def instance_installation_dir
