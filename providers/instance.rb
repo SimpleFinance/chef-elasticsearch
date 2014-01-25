@@ -4,6 +4,7 @@ def initialize(new_resource, run_context)
   @new_resource = new_resource
   @user = @new_resource.user
   @group = @new_resource.group
+  @mlockall = @new_resource.mlockall
   @user_res = set_user_resource
   @group_res = set_group_resource
   @service_res = set_service_resource
@@ -146,9 +147,10 @@ def manage_service_init(action)
   @init_res.variables({
     bin_path: instance_binary,
     env_vars_file: instance_environment_vars_file,
-    pid_file: "#{instance_installation_configuration_dir}/#{@new_resources.name}.pid",
+    pid_file: "#{instance_installation_configuration_dir}/elasticsearch-#{@new_resource.name}.pid",
     name: @new_resource.name,
-    user: @user
+    user: @user,
+    mlockall: @mlockall
   })
   @init_res.run_action(action)
 end

@@ -10,6 +10,7 @@ attribute :destination_dir, kind_of: String, default: ::File.join('', 'opt', 'el
 attribute :configuration_dir, kind_of: String
 attribute :install_options, kind_of: Hash
 attribute :service_options, kind_of: Hash
+attribute :mlockall, kind_of: [TrueClass, FalseClass], default: true
 
 attribute :install_type, kind_of: String,
   equal_to: %w(tgz package), default: 'tgz'

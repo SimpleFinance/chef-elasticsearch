@@ -42,7 +42,7 @@ case "$1" in
   ;;
 
   status)
-    status_of_proc -p $PIDFILE elasticsearch <%= @name %> && exit 0 || exit $?
+  status_of_proc -p $PIDFILE elasticsearch ${DAEMON} && exit 0 || exit $?
   ;;
 
   *)
