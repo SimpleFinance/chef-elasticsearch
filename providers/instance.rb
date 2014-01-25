@@ -14,6 +14,7 @@ def initialize(new_resource, run_context)
   @inst_dir_res = set_installation_dir_resource
   @source_file_res = set_source_file_resource
   @extract_res = set_extract_resource
+  @service_env_vars_res = set_service_env_vars_resource
 end
 
 action :create do
@@ -27,6 +28,7 @@ action :create do
   manage_source_file(:create)
   manage_extract_file(:run)
   manage_config_dir_link(:create)
+  manage_env_vars_file(:create)
   manage_service_init(:create)
 end
 
@@ -66,6 +68,10 @@ end
 
 def set_service_init_resource
   Chef::Resource::Template.new(@new_resource.name, @run_context)
+end
+
+def set_service_env_vars_resource
+  Chef::Resource::Template.new("#{@new_resource.name}_env_vars", @run_context)
 end
 
 def set_source_file_resource
@@ -140,10 +146,22 @@ def manage_service_init(action)
   @init_res.variables({
     bin_path: instance_binary,
     env_vars_file: instance_environment_vars_file,
+    pid_file: "#{instance_installation_configuration_dir}/#{@new_resources.name}.pid",
     name: @new_resource.name,
     user: @user
   })
   @init_res.run_action(action)
+end
+
+def manage_env_vars_file(action)
+  @service_env_vars_res.path instance_environment_vars_file
+  @service_env_vars_res.source 'environment_vars.erb'
+  @service_env_vars_res.cookbook 'elasticsearch'
+  @service_env_vars_res.owner @user
+  @service_env_vars_res.group @group
+  @service_env_vars_res.mode "00644"
+  @service_env_vars_res.variables :service_options => @new_resource.service_options.clone
+  @service_env_vars_res.run_action(action)
 end
 
 def manage_config_dir_link(action)

@@ -2,26 +2,47 @@
 #
 # Elasticsearch init script for Instance <%= @name -%>
 # The chef_elasticsearch cookbook manages me.
+#
+. /lib/lsb/init-functions
+
+PIDFILE="<%= @pid_file %>"
+DAEMON="elasticsearch-<%= @name %>"
 
 if [ -f <%= @env_vars_file -%> ]; then
-  source <%= @env_vars_file %>
+  . <%= @env_vars_file %>
 fi
 
 case "$1" in
 
   start)
-    echo "Starting ES Instance[<%= @name -%>]: "
-    su - <%= @user -%> -c "<%= @bin_path %>"
-    echo "OK"
+    log_daemon_msg "Starting ES Instance [<%= @name -%>]: "
+    <% if @mlockall -%>
+    ulimit -l unlimited
+    <% end -%>
+    su - <%= @user -%> -c ". <%= @env_vars_file %>; <%= @bin_path %> -p ${PIDFILE}" > /dev/null
+    log_end_msg $?
   ;;
 
   stop)
-    echo "Stopping ES Instance[<%= @name %>]"
-    echo "OK"
+    log_daemon_msg "Stopping ES Instance [<%= @name %>]"
+    if [ -f "$PIDFILE" ]; then
+      start-stop-daemon --stop --pidfile "$PIDFILE" --user "<%= @user %>" --retry=TERM/20/KILL/5 > /dev/null
+      if [ $? -eq 1 ]; then
+        log_progress_msg "$DAEMON is not running but pid exists. Cleaning up"
+      elif [ $? -eq 3 ]; then
+        PID="`cat $PIDFILE`"
+        log_failure_msg "Failed to stop $DAEMON (pid $PID)"
+        exit 1
+      fi
+      rm -f "$PIDFILE"
+    else
+        log_progres_msg "(not running)"
+    fi
+    log_end_msg 0
   ;;
 
   status)
-    echo "Status ES Instance[<%= @name %>]"
+    status_of_proc -p $PIDFILE elasticsearch <%= @name %> && exit 0 || exit $?
   ;;
 
   *)
