@@ -19,7 +19,8 @@ case "$1" in
     <% if @mlockall -%>
     ulimit -l unlimited
     <% end -%>
-    su - <%= @user -%> -c ". <%= @env_vars_file %>; <%= @bin_path %> -p ${PIDFILE}" > /dev/null
+    start-stop-daemon --start -b --user "<%= @user %>" -c "<%= @user %>" --pidfile "${PIDFILE}" --exec <%= @bin_path %> -- -p ${PIDFILE}
+    #su - <%= @user -%> -c ". <%= @env_vars_file %>; <%= @bin_path %> -p ${PIDFILE}" > /dev/null
     log_end_msg $?
   ;;
 
@@ -36,7 +37,7 @@ case "$1" in
       fi
       rm -f "$PIDFILE"
     else
-        log_progres_msg "(not running)"
+        log_progress_msg "(not running)"
     fi
     log_end_msg 0
   ;;
