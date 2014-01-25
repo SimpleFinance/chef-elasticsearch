@@ -42,6 +42,14 @@ case "$1" in
     log_end_msg 0
   ;;
 
+  restart|force-reload)
+	if [ -f "$PIDFILE" ]; then
+		$0 stop
+		sleep 1
+	fi
+	$0 start
+	;;
+
   status)
   status_of_proc -p $PIDFILE elasticsearch ${DAEMON} && exit 0 || exit $?
   ;;
