@@ -29,7 +29,7 @@ action :create do
   manage_source_file(:create)
   manage_extract_file(:run)
   manage_config_dir_link(:create)
-  manage_env_vars_file(:create)
+  manage_env_vars_file(:create) unless @new_resource.service_options.nil?
   manage_service_init(:create)
 end
 
