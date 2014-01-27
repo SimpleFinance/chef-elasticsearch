@@ -162,7 +162,7 @@ def manage_env_vars_file(action)
   @service_env_vars_res.owner @user
   @service_env_vars_res.group @group
   @service_env_vars_res.mode "00644"
-  @service_env_vars_res.variables :service_options => @new_resource.service_options.clone
+  @service_env_vars_res.variables :service_options => @new_resource.service_options
   @service_env_vars_res.run_action(action)
 end
 
