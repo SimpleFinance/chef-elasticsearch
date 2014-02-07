@@ -218,7 +218,7 @@ def instance_configuration_dir
 end
 
 def plugin_dir
-  ::File.join('', instance_destination_dir, 'plugins')
+  ::File.join('', instance_installation_dir, 'plugins')
 end
 
 def instance_environment_vars_file
