@@ -37,6 +37,18 @@ action :enable do
   manage_service(:enable)
 end
 
+action :start do
+  manage_service(:start)
+end
+
+action :stop do
+  manage_service(:stop)
+end
+
+action :restart do
+  manage_service(:restart)
+end
+
 action :destroy do
   [@dest_dir_res, @conf_dir_res, @inst_dir_res].each do |dir|
     manage_directory(dir, :delete)
@@ -64,7 +76,7 @@ def set_group_resource
 end
 
 def set_service_resource
-  Chef::Resource::Service.new(@new_resource.name, @run_context)
+  Chef::Resource::Service.new("elasticsearch-#{ @new_resource.name }", @run_context)
 end
 
 def set_service_init_resource
@@ -175,7 +187,7 @@ def manage_config_dir_link(action)
 end
 
 def manage_service(action)
-  @service.run_action(action)
+  @service_res.run_action(action)
 end
 
 def instance_destination_dir

@@ -1,5 +1,5 @@
 
-actions :create, :enable, :destroy, :disable
+actions :create, :enable, :destroy, :disable, :start, :stop, :restart
 default_action :create
 
 attribute :name, kind_of: String, name_attribute: true
