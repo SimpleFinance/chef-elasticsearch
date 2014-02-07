@@ -16,6 +16,7 @@ def initialize(new_resource, run_context)
   @source_file_res = set_source_file_resource
   @extract_res = set_extract_resource
   @service_env_vars_res = set_service_env_vars_resource
+  @plugin_dir_res = set_plugin_dir_resource
 end
 
 action :create do
@@ -28,6 +29,7 @@ action :create do
 
   manage_source_file(:create)
   manage_extract_file(:run)
+  manage_plugin_directory(:create)
   manage_config_dir_link(:create)
   manage_env_vars_file(:create) unless @new_resource.service_options.nil?
   manage_service_init(:create)
@@ -111,6 +113,10 @@ def set_extract_resource
   Chef::Resource::Execute.new(source_file, @run_context)
 end
 
+def set_plugin_dir_resource
+  Chef::Resource::Directory.new(plugin_dir, @run_context)
+end
+
 def manage_user(action)
   @user_res.system true
   @user_res.run_action(action)
@@ -186,6 +192,15 @@ def manage_config_dir_link(action)
   @link_res.run_action(action)
 end
 
+def manage_plugin_directory(action)
+  @plugin_dir_res.path plugin_dir
+  @plugin_dir_res.user @user
+  @plugin_dir_res.group @group
+  @plugin_dir_res.recursive true
+  @plugin_dir_res.mode 00755
+  @plugin_dir_res.run_action(action)
+end
+
 def manage_service(action)
   @service_res.run_action(action)
 end
@@ -200,6 +215,10 @@ def instance_configuration_dir
   else
     @new_resource.configuration_dir
   end
+end
+
+def plugin_dir
+  ::File.join('', instance_plugin_dir, 'plugins')
 end
 
 def instance_environment_vars_file
