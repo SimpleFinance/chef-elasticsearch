@@ -190,6 +190,10 @@ def instance_configuration_dir
   end
 end
 
+def plugin_dir
+  ::File.join('', instance_destination_dir, 'plugins')
+end
+
 def instance_environment_vars_file
   ::File.join('', instance_configuration_dir, 'environment_vars')
 end

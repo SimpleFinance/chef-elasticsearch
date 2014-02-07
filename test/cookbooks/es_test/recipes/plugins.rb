@@ -5,7 +5,7 @@ elasticsearch_instance 'es_test' do
   user 'elastic'
   group 'elastic'
   install_options({
-    version: '0.90.2',
+    version: '0.90.4',
     url: 'https://download.elasticsearch.org/elasticsearch/elasticsearch'
   })
 end
