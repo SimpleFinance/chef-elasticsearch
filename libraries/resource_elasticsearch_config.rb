@@ -3,8 +3,7 @@ require 'chef/resource'
 class Chef
   class Resource
     class ElasticsearchConfig < Chef::Resource
-
-      def initialize
+      def initialize(name, run_context = nil)
         super
         @resource_name = :elasticsearch_config
         @provider = Chef::Provider::ElasticsearchConfig
@@ -30,7 +29,6 @@ class Chef
                       arg,
                       kind_of: [Hash])
       end
-
     end
   end
 end
