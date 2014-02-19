@@ -21,7 +21,8 @@ class Chef
       def config_type(arg = nil)
         set_or_return(:config_type,
                       arg,
-                      kind_of: [Symbol, String])
+                      kind_of: [Symbol, String],
+                      equal_to: [:elasticsearch, :logging])
       end
 
       def config_options(arg = nil)
