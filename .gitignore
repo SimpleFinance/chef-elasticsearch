@@ -8,9 +8,6 @@ Gemfile.lock
 .*.sw[a-z]
 *.un~
 /cookbooks
-.bundle
-.gems
-.idea
 .kitchen/
 .kitchen.local.yml
 .DS_Store
