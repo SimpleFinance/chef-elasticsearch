@@ -7,6 +7,7 @@ class Chef
       def initialize(new_resource, run_context)
         super
         @new_resource = new_resource
+        @run_context = run_context
         @user = @new_resource.user
         @group = @new_resource.group
       end
@@ -15,7 +16,7 @@ class Chef
         manage_user(:create)
         manage_group(:create)
 
-        [@dest_dir_res, @conf_dir_res, @inst_dir_res].each do |dir|
+        [dest_dir_res, conf_dir_res, inst_dir_res].each do |dir|
           manage_directory(dir , :create)
         end
 
@@ -44,7 +45,7 @@ class Chef
       end
 
       def action_destroy
-        [@dest_dir_res, @conf_dir_res, @inst_dir_res].each do |dir|
+        [dest_dir_res, conf_dir_res, inst_dir_res].each do |dir|
           manage_directory(dir, :delete)
         end
 
@@ -61,84 +62,84 @@ class Chef
 
       private
 
-      def set_user_resource
+      def user_res
         @user_res ||=
             Chef::Resource::User.new(
                 @user, @run_context
             )
       end
 
-      def set_group_resource
+      def group_res
         @group_res ||=
             Chef::Resource::Group.new(
                 @group, @run_context
             )
       end
 
-      def set_service_resource
+      def service_res
         @service_res ||=
             Chef::Resource::Service.new(
                 "elasticsearch-#{ @new_resource.name }", @run_context
             )
       end
 
-      def set_service_init_resource
+      def init_res
         @init_res ||=
             Chef::Resource::Template.new(
                 @new_resource.name, @run_context
             )
       end
 
-      def set_service_env_vars_resource
+      def service_env_vars_res
         @service_env_vars_res ||=
             Chef::Resource::Template.new(
                 "#{@new_resource.name}_env_vars", @run_context
             )
       end
 
-      def set_source_file_resource
+      def source_file_res
         @source_file_res ||=
             Chef::Resource::RemoteFile.new(
                 file_name, @run_context
             )
       end
 
-      def set_destination_dir_resource
+      def dest_dir_res
         @dest_dir_res ||=
             Chef::Resource::Directory.new(
                 instance_destination_dir, @run_context
             )
       end
 
-      def set_configuration_dir_resource
+      def conf_dir_res
         @conf_dir_res ||=
             Chef::Resource::Directory.new(
                 instance_configuration_dir, @run_context
             )
       end
 
-      def set_installation_dir_resource
+      def inst_dir_res
         @inst_dir_res ||=
             Chef::Resource::Directory.new(
                 instance_installation_dir, @run_context
             )
       end
 
-      def set_config_dir_link_resource
+      def link_res
         @link_res ||=
             Chef::Resource::Link.new(
                 instance_installation_configuration_dir, @run_context
             )
       end
 
-      def set_extract_resource
+      def extract_res
         @extract_res ||=
             Chef::Resource::Execute.new(
                 source_file, @run_context
             )
       end
 
-      def set_plugin_dir_resource
+      def plugin_dir_res
         @plugin_dir_res ||=
             Chef::Resource::Directory.new(
                 plugin_dir, @run_context
@@ -146,13 +147,13 @@ class Chef
       end
 
       def manage_user(action)
-        @user_res.system true
-        @user_res.run_action(action)
+        user_res.system true
+        user_res.run_action(action)
       end
 
       def manage_group(action)
-        @group_res.system true
-        @group_res.run_action(action)
+        group_res.system true
+        group_res.run_action(action)
       end
 
       def manage_directory(res, action)
@@ -164,33 +165,33 @@ class Chef
       end
 
       def manage_source_file(action)
-        @source_file_res.path source_file
-        @source_file_res.source remote_file_location
-        @source_file_res.user @user
-        @source_file_res.group @group
-        @source_file_res.mode 00644
-        @source_file_res.run_action(action)
+        source_file_res.path source_file
+        source_file_res.source remote_file_location
+        source_file_res.user @user
+        source_file_res.group @group
+        source_file_res.mode 00644
+        source_file_res.run_action(action)
       end
 
-      # HACK: Really dislike the execute resource.
+      # Fixme: Use mixlib-shellout directly.
       def manage_extract_file(action)
-        @extract_res.user 'root'
-        @extract_res.path %w(/bin /sbin /usr/bin /usr/sbin)
-        @extract_res.command tar_command
-        @extract_res.creates instance_binary
-        @extract_res.returns 0
-        @extract_res.timeout 180
-        @extract_res.run_action(action)
+        extract_res.user 'root'
+        extract_res.path %w(/bin /sbin /usr/bin /usr/sbin)
+        extract_res.command tar_command
+        extract_res.creates instance_binary
+        extract_res.returns 0
+        extract_res.timeout 180
+        extract_res.run_action(action)
       end
 
       def manage_service_init(action)
-        @init_res.path init_file
-        @init_res.source 'elasticsearch-init.erb'
-        @init_res.cookbook 'elasticsearch'
-        @init_res.owner @user
-        @init_res.group @group
-        @init_res.mode 00755
-        @init_res.variables(
+        init_res.path init_file
+        init_res.source 'elasticsearch-init.erb'
+        init_res.cookbook 'elasticsearch'
+        init_res.owner @user
+        init_res.group @group
+        init_res.mode 00755
+        init_res.variables(
           bin_path: instance_binary,
           env_vars_file: instance_environment_vars_file,
           pid_file: "#{instance_installation_configuration_dir}" \
@@ -198,41 +199,41 @@ class Chef
           name: @new_resource.name,
           user: @user
         )
-        @init_res.run_action(action)
+        init_res.run_action(action)
       end
 
       def manage_env_vars_file(action)
-        @service_env_vars_res.path instance_environment_vars_file
-        @service_env_vars_res.source 'environment_vars.erb'
-        @service_env_vars_res.cookbook 'elasticsearch'
-        @service_env_vars_res.owner @user
-        @service_env_vars_res.group @group
-        @service_env_vars_res.mode 00644
-        @service_env_vars_res.variables(
+        service_env_vars_res.path instance_environment_vars_file
+        service_env_vars_res.source 'environment_vars.erb'
+        service_env_vars_res.cookbook 'elasticsearch'
+        service_env_vars_res.owner @user
+        service_env_vars_res.group @group
+        service_env_vars_res.mode 00644
+        service_env_vars_res.variables(
             service_options: @new_resource.service_options
         )
-        @service_env_vars_res.run_action(action)
+        service_env_vars_res.run_action(action)
       end
 
       def manage_config_dir_link(action)
-        @link_res.target_file instance_installation_configuration_dir
-        @link_res.to instance_configuration_dir
-        @link_res.owner @user
-        @link_res.group @group
-        @link_res.run_action(action)
+        link_res.target_file instance_installation_configuration_dir
+        link_res.to instance_configuration_dir
+        link_res.owner @user
+        link_res.group @group
+        link_res.run_action(action)
       end
 
       def manage_plugin_directory(action)
-        @plugin_dir_res.path plugin_dir
-        @plugin_dir_res.user @user
-        @plugin_dir_res.group @group
-        @plugin_dir_res.recursive true
-        @plugin_dir_res.mode 00755
-        @plugin_dir_res.run_action(action)
+        plugin_dir_res.path plugin_dir
+        plugin_dir_res.user @user
+        plugin_dir_res.group @group
+        plugin_dir_res.recursive true
+        plugin_dir_res.mode 00755
+        plugin_dir_res.run_action(action)
       end
 
       def manage_service(action)
-        @service_res.run_action(action)
+        service_res.run_action(action)
       end
 
       def instance_destination_dir
